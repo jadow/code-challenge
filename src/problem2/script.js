@@ -5,7 +5,8 @@ function check() {
 
   //check if ETH address is value
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-  var resultAddress = web3.utils.isAddress(address.value);
+  //var resultAddress = web3.utils.isAddress(address.value);
+  var resultAddress = true
 
   //check if amount to send is valid
   //One ether = 1,000,000,000,000,000,000 wei (1018).
