@@ -1,0 +1,18 @@
+//get all unique addresses where block height > 73000
+//for each unique address, calculate sum for usdc, swth and tmz sepertely
+//calculate total value and check value> 500usd
+
+SELECT address, denom, SUM(amount) from trades where address EXISTS (SELECT DISTINCT address FROM trade Where Block Height > 73000) GROUP By address, denom
+
+amount := map[string]float{"usdc":usdcValue,"swth":swthValue,"tmz":tmzValue}
+var addressList []string
+sum := "0"
+for i, v := range dataFromDB {
+  sum += v.GetAmount() * amount[v.GetDenom()]
+  if v.GetAddress() != dataFromDB[i+1].GetAddress() {
+    if sum >= 500 {
+      addressList = Append(addressList, v.GetAddress())
+    }
+    sum == 0
+  }
+}
