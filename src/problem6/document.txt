@@ -1,0 +1,33 @@
+The system consists of an
+* microservice to server api calls
+* a database to store past tranactions and record status of transaction
+* kafka queue to queue broadcast request for the pipeline
+* pipeline to asynchronously broadcast signed request
+
+user sign interaction with microservice
+1. user send sign request to microservice
+2. add try entry to tranactions table
+3. microservice add signed transaction to kafka queue
+4. return signed transaction to user
+
+on manual retry
+1. user send retry request to microservice
+2. microservice check for signed transaction in tranactions table
+3. microservice add signed transaction to kafka queue
+4. return current tcc table status to user
+
+asynchronous pipeline to broadcast
+1. read from kafka queue
+2. update tcc table status with attempted
+3. send rpc request to blockchain code
+4. on success, update tcc table status with success
+5. acknowledge kafka message
+
+asynchronous pipeline to broadcast(on failure)
+1. read from kafka queue
+2. update tcc table with attempted
+3. send rpc request to blockchain code
+4. on timeout or failure, add kafka message back to queue
+
+On service restart, the pipeline will continue to broadcast any signed transaction still in the kafka message queue.
+Status of complete, currently processing and to be processed transaction can be retrieved from database table
