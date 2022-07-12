@@ -1,7 +1,6 @@
 const url = "https://static.ngnrs.io/test/prices"
 
 async function getFile() {
-  // await code here
   let result = await makeRequest("GET", url);
   return result
 }
@@ -31,8 +30,12 @@ function makeRequest(method, url) {
 }
 
 class Datasource {
-  getPrices() {
-    var text = getFile()
+  async getPrices() {
+    //should have text data at this point
+    var text = await getFile()  
+    const obj = JSON.parse(text)
+    return obj.data.prices
+    //return array of data
   }
 }
 
@@ -51,7 +54,7 @@ function main() {
 
 main();
 
-// class Prices {
+// class row {
 //   constructor(pair, timestamp, buy, sell, id) {
 //     this.pair = pair;
 //     this.timestamp = timestamp;
@@ -76,3 +79,4 @@ main();
 //     }
 //   }
 // }
+
