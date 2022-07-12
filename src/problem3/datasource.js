@@ -30,12 +30,29 @@ function makeRequest(method, url) {
 }
 
 class Datasource {
-  async getPrices() {
-    //should have text data at this point
-    var text = await getFile()  
-    const obj = JSON.parse(text)
-    return obj.data.prices
-    //return array of data
+  getPrices() {
+    return new Promise(function (resolve, reject) {
+      getFile().then(holder => {
+          var obj = JSON.parse(holder);
+          obj = obj.data.prices;
+
+          var i
+          for (i = 0; i < obj.length; i ++) {
+            obj[i].mid = function() {
+              return (this.buy + this.sell) / 2
+            } 
+            
+            obj[i].quote = function() {
+              if(this.pair.length >= 3) {
+                    return this.pair.slice(this.pair.length -3)
+                  } else {
+                    return ""
+                  }
+            }
+          }
+          resolve(obj);
+        });
+    });
   }
 }
 
@@ -46,6 +63,7 @@ function main() {
     .then(prices => {
         prices.forEach(price => {
             console.log(`Mid price for ${ price.pair } is ${ price.mid() } ${ price.quote() }.`);
+           // console.log(`Mid price for ${ price.pair } is ${ price.mid() } ${ price.quote() }.`);
         });
     }).catch(error => {
         console.err(error);
@@ -53,30 +71,3 @@ function main() {
 }
 
 main();
-
-// class row {
-//   constructor(pair, timestamp, buy, sell, id) {
-//     this.pair = pair;
-//     this.timestamp = timestamp;
-//     this.buy = buy;
-//     this.sell = sell;
-//     this.id = id;
-//   }
-
-//   mid() {
-//     return (buy + sell) / 2
-//   }
-
-//   //when ETHSGD will return SGD
-//   //when ESGD will return ESGD
-//   //when SGD will return SGD
-//   //when GD return nothing
-//   quote() {
-//     if this.pair.length >= 3 {
-//       return pair.slice(pair.length -3)
-//     } else {
-//       return ""
-//     }
-//   }
-// }
-
