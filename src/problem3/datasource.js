@@ -36,12 +36,17 @@ class Datasource {
           var obj = JSON.parse(holder);
           obj = obj.data.prices;
 
-          var i
-          for (i = 0; i < obj.length; i ++) {
+          //add function for each object
+          for (var i = 0; i < obj.length; i ++) {
+
+            //avoid overflow
             obj[i].mid = function() {
-              return (this.buy + this.sell) / 2
+              return this.buy/2 + this.sell/2
             } 
             
+            //BTCUSD returns USD
+            //BUSD returns USD
+            //SD returns ""
             obj[i].quote = function() {
               if(this.pair.length >= 3) {
                     return this.pair.slice(this.pair.length -3)
@@ -63,7 +68,6 @@ function main() {
     .then(prices => {
         prices.forEach(price => {
             console.log(`Mid price for ${ price.pair } is ${ price.mid() } ${ price.quote() }.`);
-           // console.log(`Mid price for ${ price.pair } is ${ price.mid() } ${ price.quote() }.`);
         });
     }).catch(error => {
         console.err(error);
